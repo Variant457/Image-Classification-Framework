@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Image-Classification-Framework/CopilotIndices/17.14.1368.60722/CodeChunks.db
+/.vs/Image-Classification-Framework/CopilotIndices/17.14.1368.60722/CodeChunks.db-shm
+/.vs/Image-Classification-Framework/CopilotIndices/17.14.1368.60722/CodeChunks.db-wal
+/.vs/Image-Classification-Framework/CopilotIndices/17.14.1368.60722/SemanticSymbols.db
+/.vs/Image-Classification-Framework/CopilotIndices/17.14.1368.60722/SemanticSymbols.db-shm
+/.vs/Image-Classification-Framework/CopilotIndices/17.14.1368.60722/SemanticSymbols.db-wal
+/.vs/Image-Classification-Framework/FileContentIndex/102df547-2f40-48c0-a86e-19c5ef2d300e.vsidx
+/.vs/Image-Classification-Framework/FileContentIndex/537908b1-e535-4fe5-8dfb-11e560786af8.vsidx
+/.vs/Image-Classification-Framework/FileContentIndex/60a2982a-532c-4e9a-a423-f34f262ba4b0.vsidx
+/.vs/Image-Classification-Framework/FileContentIndex/a0373ebe-a203-4f70-b027-ead1c55fba76.vsidx
+/.vs/Image-Classification-Framework/FileContentIndex/be0579be-3d38-4e08-89a7-7a87af79031c.vsidx
