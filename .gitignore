@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
@@ -15,3 +16,9 @@
 /.vs/Image-Classification-Framework/FileContentIndex/be0579be-3d38-4e08-89a7-7a87af79031c.vsidx
 /.vs/Image-Classification-Framework/FileContentIndex/158d365c-4987-4a07-a567-d8f9f274357d.vsidx
 /.vs/Image-Classification-Framework/FileContentIndex/a59da9fc-ca19-477a-834c-808ef05ca9ac.vsidx
+=======
+.venv/
+>>>>>>> 681150e4c2137c2d50b47064293226e18ad9e3f3
+/.vs/Image-Classification-Framework/FileContentIndex/d26fb4ce-8069-453f-b208-052406d951e3.vsidx
+/.vs/Image-Classification-Framework/FileContentIndex/d3461248-ddaf-4198-be87-9adc8c93ac6a.vsidx
+/.vs/Image-Classification-Framework/FileContentIndex/bcf40dd2-7eaa-4695-8f6f-340078fd44cb.vsidx
