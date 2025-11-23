@@ -36,11 +36,11 @@ def main():
         final_train_indices.extend(idxs[:split_idx])
         final_val_indices.extend(idxs[split_idx:])
 
-    test_indices = {cls_id: [] for cls_id in selected_label_ids}
+    test_indices = []
     for idx in range(len(cifar_test)):
         _, label = cifar_test[idx]
         if label in selected_label_ids:
-            test_indices[label].append(idx)
+            test_indices.append(idx)
 
     def dump_split(dataset, indices, split_name):
         for idx in indices:
