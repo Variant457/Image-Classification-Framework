@@ -15,7 +15,7 @@ APP_PORT = int(os.getenv("PORT", "5001"))
 IMAGES_DIR = os.getenv("IMAGES_DIR", os.path.join(os.path.dirname(__file__), "images"))
 
 # AI service endpoint.
-AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://ai-classification-service:5000/predict")
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://ai-classification-service:8000/predict")
 
 
 app = Flask(__name__)

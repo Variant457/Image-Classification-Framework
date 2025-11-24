@@ -1,0 +1,30 @@
+services:
+  ai-classification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    container_name: ai-classification-service
+    environment:
+      - HOST=127.0.0.1
+      - PORT=8000
+    ports:
+      - "8000:8000" 
+    command: >
+      python api_service.py
+
+  image-feed-service:
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    container_name: image-feed-service
+    environment:
+      - HOST=0.0.0.0
+      - PORT=5001
+      - AI_SERVICE_URL=http://ai-classification-service:5000/predict
+      - IMAGES_DIR=/app/images  
+    ports:
+      - "5001:5001"
+    command: >
+      python app.py
+    depends_on:
+      - ai-classification-service
