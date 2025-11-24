@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Image Classification Dashboard</title>
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #0f1115;
+            color: #e6e6e6;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 18px;
+        }
+
+        .card {
+            background: #171a21;
+            border: 1px solid #252a35;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0 0 12px;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 0 0 10px;
+            color: #aab2c5;
+        }
+
+        .img-wrap {
+            background: #0b0d12;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            min-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #2a2f3a;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 360px;
+            border-radius: 10px;
+        }
+
+        .placeholder {
+            font-size: 14px;
+            color: #80889a;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+        }
+
+        .label {
+            color: #aab2c5;
+        }
+
+        .value {
+            font-weight: 600;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0b0d12;
+            background: #7dd3fc;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            button:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+        pre {
+            background: #0b0d12;
+            border: 1px solid #252a35;
+            border-radius: 10px;
+            padding: 10px;
+            overflow: auto;
+            max-height: 250px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .status {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #9aa3b8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-time Image Classification Dashboard</h1>
+
+    <div class="container">
+        <!-- Left: Image -->
+        <div class="card">
+            <h2>Last Processed Image</h2>
+            <div id="imgWrap" class="img-wrap">
+                <div class="placeholder">No image processed yet.</div>
+            </div>
+            <div class="status" id="imgMeta"></div>
+        </div>
+
+        <!-- Right: Result -->
+        <div class="card">
+            <h2>Classification Result</h2>
+
+            <div class="row">
+                <div class="label">Predicted class</div>
+                <div class="value" id="predClass">—</div>
+            </div>
+            <div class="row">
+                <div class="label">Confidence</div>
+                <div class="value" id="confidence">—</div>
+            </div>
+            <div class="row">
+                <div class="label">Timestamp (UTC)</div>
+                <div class="value" id="timestamp">—</div>
+            </div>
+
+            <button id="feedBtn" onclick="triggerFeed()">Process New Image</button>
+            <div class="status" id="status"></div>
+
+            <h2 style="margin-top:14px;">Raw AI Output</h2>
+            <pre id="rawJson">{}</pre>
+        </div>
+    </div>
+
+    <script>
+  const imgWrap = document.getElementById("imgWrap");
+  const imgMeta = document.getElementById("imgMeta");
+  const predClass = document.getElementById("predClass");
+  const confidence = document.getElementById("confidence");
+  const timestamp = document.getElementById("timestamp");
+  const rawJson = document.getElementById("rawJson");
+  const statusEl = document.getElementById("status");
+  const feedBtn = document.getElementById("feedBtn");
+
+  function setStatus(msg) {
+    statusEl.textContent = msg || "";
+  }
+
+  function render(result) {
+    // result shape from Feed Service:
+    // {
+    //   timestamp,
+    //   image_name,
+    //   ai: { class, confidence, ... } or { error: ... }
+    // }
+
+    if (!result || result.message) {
+      imgWrap.innerHTML = `<div class="placeholder">No image processed yet.</div>`;
+      imgMeta.textContent = "";
+      predClass.textContent = "—";
+      confidence.textContent = "—";
+      timestamp.textContent = "—";
+      rawJson.textContent = "{}";
+      return;
+    }
+
+    const ai = result.ai || {};
+    const cls = ai.class || ai.prediction || ai.label || "unknown";
+    const conf = ai.confidence ?? ai.score ?? "N/A";
+
+    predClass.textContent = cls;
+    confidence.textContent = (typeof conf === "number")
+      ? conf.toFixed(3)
+      : conf;
+    timestamp.textContent = result.timestamp || "—";
+    rawJson.textContent = JSON.stringify(ai, null, 2);
+
+    // Image display:
+    if (result.image_base64) {
+      imgWrap.innerHTML = `<img src="data:image/jpeg;base64,${result.image_base64}" />`;
+    } else if (result.image_url) {
+      imgWrap.innerHTML = `<img src="${result.image_url}" />`;
+    } else {
+      imgWrap.innerHTML = `
+        <div class="placeholder">
+          (Placeholder preview)<br/>
+          Image name: <b>${result.image_name || "unknown"}</b>
+        </div>
+      `;
+    }
+
+    imgMeta.textContent = result.image_name
+      ? `File: ${result.image_name}`
+      : "";
+  }
+
+  async function fetchLast() {
+    try {
+      const r = await fetch("/api/last");
+      const data = await r.json();
+      render(data);
+    } catch (e) {
+      setStatus("Dashboard could not reach Feed Service.");
+    }
+  }
+
+  async function triggerFeed() {
+    feedBtn.disabled = true;
+    setStatus("Processing new image...");
+    try {
+      const r = await fetch("/api/feed", { method: "POST" });
+      const data = await r.json();
+      render(data);
+      setStatus(r.ok ? "Done." : "AI/Feed error — see raw output.");
+    } catch (e) {
+      setStatus("Failed to trigger Feed Service.");
+    } finally {
+      feedBtn.disabled = false;
+    }
+  }
+
+  // initial load
+  fetchLast();
+    </script>
+</body>
+</html>
