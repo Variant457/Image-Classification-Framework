@@ -1,6 +1,7 @@
 import os
 import random
 import threading
+import base64
 from datetime import datetime
 from typing import Optional, Dict, Any
 
@@ -71,10 +72,14 @@ def feed_once():
     image_path = choose_image(files)
     ai_resp = call_ai(image_path)
 
+    with open(image_path, 'rb') as img_f:
+        b64_str = base64.b64encode(img_f.read()).decode("utf-8")
+
     result = {
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "image_name": os.path.basename(image_path),
         "image_path": image_path,  # internal container path; dashboard can ignore
+        "image_base64": b64_str,
         "ai": ai_resp["payload"],
     }
 

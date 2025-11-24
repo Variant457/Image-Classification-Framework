@@ -6,7 +6,7 @@ RUN pip install -r requirements.txt
 
 COPY api_service.py ./
 COPY model.py ./
-COPY /models ./
+COPY /models ./models
 
 ENV PORT=8000
 EXPOSE 8000
