@@ -1,2 +1,4 @@
 .venv/
 .vs/
+cifar_data/
+data/
