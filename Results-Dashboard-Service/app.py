@@ -5,7 +5,7 @@ from flask import Flask, jsonify, send_from_directory
 app = Flask(__name__, static_folder="static", static_url_path="")
 
 FEED_URL = os.getenv("FEED_URL", "http://image-feed-service:5001")
-AI_URL = os.getenv("AI_URL", "http://ai-classification-service:5000")
+AI_URL = os.getenv("AI_URL", "http://ai-classification-service:8000")
 TIMEOUT = float(os.getenv("REQ_TIMEOUT", "3.5"))
 
 @app.get("/")

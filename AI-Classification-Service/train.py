@@ -1,4 +1,5 @@
 import torch
+import copy
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms, models
@@ -9,7 +10,7 @@ class AIClassificationService:
         base_dir = Path(__file__).resolve().parent
         self.DATA_DIR = base_dir / "data"
         self.BATCH_SIZE = 32
-        self.NUM_EPOCHS = 100
+        self.NUM_EPOCHS = 20
         self.LEARNING_RATE = 0.001
         self.NUM_WORKERS = 4
         self.DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -125,24 +126,25 @@ def main():
 
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            best_state_dict = model.state_dict()
+            best_state_dict = copy.deepcopy(model.state_dict())
 
-        if best_state_dict is not None:
-            model.load_state_dict(best_state_dict)
+    if best_state_dict is not None:
+        print(f"Loading best model with Val Acc: {best_val_acc:.4f}")
+        model.load_state_dict(best_state_dict)
 
-        test_loss, test_acc = service.evaluate(model, service.test_loader, criterion, service.DEVICE)
-        print(f"Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.4f}")
+    test_loss, test_acc = service.evaluate(model, service.test_loader, criterion, service.DEVICE)
+    print(f"Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.4f}")
 
-        save_path = Path("models")
-        save_path.mkdir(exist_ok=True)
-        torch.save(
-            {
-                "model_state_dict": model.state_dict(),
-                "class_names": service.CLASS_NAMES,
-            },
-            save_path / "resnet18_transfer.pth"
-        )
-        print(f"Model saved to {save_path / 'resnet18_transfer.pth'}")
+    save_path = Path("models")
+    save_path.mkdir(exist_ok=True)
+    torch.save(
+        {
+            "model_state_dict": model.state_dict(),
+            "class_names": service.CLASS_NAMES,
+        },
+        save_path / "resnet18_transfer.pth"
+    )
+    print(f"Model saved to {save_path / 'resnet18_transfer.pth'}")
 
 if __name__ == "__main__":
     main()
