@@ -10,7 +10,7 @@ class AIClassificationService:
         base_dir = Path(__file__).resolve().parent
         self.DATA_DIR = base_dir / "data"
         self.BATCH_SIZE = 32
-        self.NUM_EPOCHS = 50
+        self.NUM_EPOCHS = 20
         self.LEARNING_RATE = 0.001
         self.NUM_WORKERS = 4
         self.DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
