@@ -8,9 +8,6 @@ classifier = AIClassificationModel()
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    if not file.content_type.startswith("image/"): # type: ignore
-        raise HTTPException(status_code=400, detail="Uploaded file is not an image")
-    
     try:
         image_bytes = await file.read()
         result = classifier.predictFromBytes(image_bytes)

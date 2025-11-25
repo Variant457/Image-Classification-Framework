@@ -26,6 +26,7 @@ class AIClassificationModel:
         self.model = model
         IMG_SIZE = 224
         self.preprocess = transforms.Compose([
+            transforms.Resize((32, 32)),
             transforms.Resize(256),
             transforms.CenterCrop(IMG_SIZE),
             transforms.ToTensor(),
